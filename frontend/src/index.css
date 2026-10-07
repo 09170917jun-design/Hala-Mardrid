@@ -1,0 +1,14 @@
+:root {
+  --navy: #0b1f4b;
+  --gold: #c9a227;
+  --bg: #ffffff;
+  --text: #1a1a1a;
+  color-scheme: light;
+  font-family: Pretendard, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
