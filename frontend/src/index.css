@@ -1,14 +1,79 @@
+/* 디자인 기준: DESIGN.md (Oceanic Clarity) */
 :root {
+  /* Brand */
+  --primary: #1e3a8a;
+  --primary-deep: #00236f;
+  --secondary: #2563eb;
+  --tertiary: #38bdf8;
+  --accent-soft: #e0f2fe;
+
+  /* Madrid accent (포인트 색) */
   --navy: #0b1f4b;
   --gold: #c9a227;
-  --bg: #ffffff;
-  --text: #1a1a1a;
+  --gold-soft: #f6efd2;
+  --gold-text: #7a5f00;
+
+  /* Neutrals */
+  --text: #0f172a;
+  --muted: #64748b;
+  --muted-2: #94a3b8;
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --chip: #f1f5f9;
+  --border: #e2e8f0;
+  --border-input: #cbd5e1;
+
+  /* Radius */
+  --radius-sm: 0.25rem;
+  --radius: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+
+  /* Shadow (blue-tinted) */
+  --shadow-1: 0 4px 20px -2px rgba(30, 58, 138, 0.05);
+  --shadow-2: 0 10px 25px -5px rgba(30, 58, 138, 0.08);
+  --shadow-3: 0 20px 35px -10px rgba(30, 58, 138, 0.15);
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+
   color-scheme: light;
-  font-family: Pretendard, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Pretendard Variable', Pretendard, system-ui, -apple-system, 'Noto Sans KR', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--tertiary);
+  outline-offset: 2px;
 }

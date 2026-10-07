@@ -1,32 +1,27 @@
-import { useEffect, useState } from 'react'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './App.css'
+import Layout from './components/Layout'
+import Board from './pages/Board'
+import Home from './pages/Home'
+import Login from './pages/Login'
+import Matches from './pages/Matches'
+import NotFound from './pages/NotFound'
+import Players from './pages/Players'
 
-type Health = { status: string; service: string }
+const router = createBrowserRouter([
+  {
+    element: <Layout />,
+    children: [
+      { path: '/', element: <Home /> },
+      { path: '/matches', element: <Matches /> },
+      { path: '/players', element: <Players /> },
+      { path: '/board', element: <Board /> },
+      { path: '/login', element: <Login /> },
+      { path: '*', element: <NotFound /> },
+    ],
+  },
+])
 
-function App() {
-  const [health, setHealth] = useState<Health | null>(null)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetch('/api/health')
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`)
-        return res.json() as Promise<Health>
-      })
-      .then(setHealth)
-      .catch((e: Error) => setError(e.message))
-  }, [])
-
-  return (
-    <main className="hero">
-      <h1>Hala Madrid</h1>
-      <p className="tagline">레알 마드리드 비공식 팬 서비스</p>
-      <p className="status">
-        백엔드 상태:{' '}
-        {health ? `${health.status} (${health.service})` : error ? `연결 실패 - ${error}` : '확인 중... (첫 요청은 최대 1분 걸릴 수 있어요)'}
-      </p>
-    </main>
-  )
+export default function App() {
+  return <RouterProvider router={router} />
 }
-
-export default App

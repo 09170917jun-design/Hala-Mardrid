@@ -21,3 +21,6 @@ backend/build/
 backend/.gradle/
 backend/out/
 *.log
+
+# Local DB init (contains password)
+*.local.sql
