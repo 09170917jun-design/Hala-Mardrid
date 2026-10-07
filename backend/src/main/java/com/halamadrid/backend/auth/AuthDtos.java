@@ -33,6 +33,14 @@ public final class AuthDtos {
             @NotBlank(message = "비밀번호를 입력해 주세요.") String password) {
     }
 
+    public record KakaoLoginRequest(
+            @NotBlank(message = "인가 코드가 없습니다.") String code,
+            @NotBlank(message = "리다이렉트 주소가 없습니다.") String redirectUri) {
+    }
+
+    public record KakaoUrlResponse(String url) {
+    }
+
     public record AuthResponse(String accessToken, long expiresIn, UserResponse user) {
     }
 

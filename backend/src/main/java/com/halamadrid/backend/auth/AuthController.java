@@ -6,15 +6,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.halamadrid.backend.auth.AuthDtos.AuthResponse;
 import com.halamadrid.backend.auth.AuthDtos.AuthResult;
+import com.halamadrid.backend.auth.AuthDtos.KakaoLoginRequest;
+import com.halamadrid.backend.auth.AuthDtos.KakaoUrlResponse;
 import com.halamadrid.backend.auth.AuthDtos.LoginRequest;
 import com.halamadrid.backend.auth.AuthDtos.SignupRequest;
+import com.halamadrid.backend.auth.kakao.KakaoClient;
 
 import jakarta.validation.Valid;
 
@@ -25,10 +30,13 @@ public class AuthController {
     static final String REFRESH_COOKIE = "refresh_token";
 
     private final AuthService authService;
+    private final KakaoClient kakaoClient;
     private final boolean cookieSecure;
 
-    public AuthController(AuthService authService, @Value("${app.cookie.secure}") boolean cookieSecure) {
+    public AuthController(AuthService authService, KakaoClient kakaoClient,
+            @Value("${app.cookie.secure}") boolean cookieSecure) {
         this.authService = authService;
+        this.kakaoClient = kakaoClient;
         this.cookieSecure = cookieSecure;
     }
 
@@ -40,6 +48,16 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         return respond(HttpStatus.OK, authService.login(request));
+    }
+
+    @GetMapping("/kakao/url")
+    public KakaoUrlResponse kakaoUrl(@RequestParam String redirectUri, @RequestParam String state) {
+        return new KakaoUrlResponse(kakaoClient.authorizeUrl(redirectUri, state));
+    }
+
+    @PostMapping("/kakao")
+    public ResponseEntity<AuthResponse> kakao(@Valid @RequestBody KakaoLoginRequest request) {
+        return respond(HttpStatus.OK, authService.kakaoLogin(request.code(), request.redirectUri()));
     }
 
     @PostMapping("/refresh")

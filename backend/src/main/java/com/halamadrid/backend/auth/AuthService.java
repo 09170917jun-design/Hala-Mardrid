@@ -24,6 +24,8 @@ import com.halamadrid.backend.auth.AuthDtos.AuthResponse;
 import com.halamadrid.backend.auth.AuthDtos.AuthResult;
 import com.halamadrid.backend.auth.AuthDtos.LoginRequest;
 import com.halamadrid.backend.auth.AuthDtos.SignupRequest;
+import com.halamadrid.backend.auth.kakao.KakaoClient;
+import com.halamadrid.backend.auth.kakao.KakaoProfile;
 import com.halamadrid.backend.common.ApiException;
 import com.halamadrid.backend.user.User;
 import com.halamadrid.backend.user.UserRepository;
@@ -36,6 +38,8 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final SocialAccountRepository socialAccountRepository;
+    private final KakaoClient kakaoClient;
     private final PasswordEncoder passwordEncoder;
     private final JwtEncoder jwtEncoder;
     private final Duration accessTtl;
@@ -43,12 +47,16 @@ public class AuthService {
 
     public AuthService(UserRepository userRepository,
             RefreshTokenRepository refreshTokenRepository,
+            SocialAccountRepository socialAccountRepository,
+            KakaoClient kakaoClient,
             PasswordEncoder passwordEncoder,
             JwtEncoder jwtEncoder,
             @Value("${app.jwt.access-minutes}") long accessMinutes,
             @Value("${app.jwt.refresh-days}") long refreshDays) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
+        this.socialAccountRepository = socialAccountRepository;
+        this.kakaoClient = kakaoClient;
         this.passwordEncoder = passwordEncoder;
         this.jwtEncoder = jwtEncoder;
         this.accessTtl = Duration.ofMinutes(accessMinutes);
@@ -81,6 +89,37 @@ public class AuthService {
                 .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS",
                         "이메일 또는 비밀번호가 올바르지 않습니다."));
         return issue(user);
+    }
+
+    /** 카카오 계정으로 로그인한다. 처음이면 회원을 만든다. */
+    @Transactional
+    public AuthResult kakaoLogin(String code, String redirectUri) {
+        KakaoProfile profile = kakaoClient.fetchProfile(code, redirectUri);
+        User user = socialAccountRepository
+                .findByProviderAndProviderId(SocialAccount.Provider.KAKAO, profile.id())
+                .map(SocialAccount::getUser)
+                .orElseGet(() -> {
+                    User created = userRepository.save(User.createSocial(uniqueNickname(profile.nickname())));
+                    socialAccountRepository.save(new SocialAccount(created, SocialAccount.Provider.KAKAO, profile.id()));
+                    return created;
+                });
+        return issue(user);
+    }
+
+    private String uniqueNickname(String raw) {
+        String base = raw == null ? "" : raw.replaceAll("[^0-9A-Za-z가-힣_]", "");
+        if (base.length() < 2) {
+            base = "마드리디스타";
+        }
+        if (base.length() > 12) {
+            base = base.substring(0, 12);
+        }
+        String candidate = base;
+        for (int i = 0; userRepository.existsByNickname(candidate) && i < 20; i++) {
+            String suffix = String.valueOf(1000 + RANDOM.nextInt(9000));
+            candidate = base.substring(0, Math.min(base.length(), 8)) + suffix;
+        }
+        return candidate;
     }
 
     /** 리프레시 토큰은 1회용이다. 사용하면 폐기하고 새 토큰을 발급한다. */

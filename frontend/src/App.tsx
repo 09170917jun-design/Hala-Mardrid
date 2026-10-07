@@ -4,6 +4,7 @@ import { AuthProvider } from './auth/AuthContext'
 import Layout from './components/Layout'
 import Board from './pages/Board'
 import Home from './pages/Home'
+import KakaoCallback from './pages/KakaoCallback'
 import Login from './pages/Login'
 import Matches from './pages/Matches'
 import Me from './pages/Me'
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
       { path: '/board', element: <Board /> },
       { path: '/login', element: <Login /> },
       { path: '/me', element: <Me /> },
+      { path: '/auth/kakao/callback', element: <KakaoCallback /> },
       { path: '*', element: <NotFound /> },
     ],
   },

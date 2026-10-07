@@ -13,8 +13,9 @@ export default function Header() {
   const navigate = useNavigate()
 
   const onLogout = async () => {
-    await logout()
+    // 먼저 홈으로 이동한 뒤 로그아웃한다. (로그인이 필요한 페이지가 로그인 화면으로 보내 버리는 것을 막는다)
     navigate('/', { replace: true })
+    await logout()
   }
 
   return (

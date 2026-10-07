@@ -52,6 +52,10 @@ public class User {
         return new User(email, passwordHash, nickname, Role.USER);
     }
 
+    public static User createSocial(String nickname) {
+        return new User(null, null, nickname, Role.USER);
+    }
+
     public Long getId() {
         return id;
     }

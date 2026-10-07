@@ -9,8 +9,9 @@ export default function Me() {
   if (!user) return <Navigate to="/login" state={{ from: '/me' }} replace />
 
   const onLogout = async () => {
-    await logout()
+    // 먼저 홈으로 이동한 뒤 로그아웃한다. (반대로 하면 이 페이지가 로그인 화면으로 보내 버린다)
     navigate('/', { replace: true })
+    await logout()
   }
 
   return (

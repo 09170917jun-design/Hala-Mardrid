@@ -6,6 +6,7 @@ type AuthContextValue = {
   ready: boolean
   login: (email: string, password: string) => Promise<void>
   signup: (email: string, password: string, nickname: string) => Promise<void>
+  kakaoLogin: (code: string, redirectUri: string) => Promise<void>
   logout: () => Promise<void>
 }
 
@@ -65,6 +66,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [apply],
   )
 
+  const kakaoLogin = useCallback(
+    async (code: string, redirectUri: string) => {
+      apply(await api<AuthResponse>('/api/auth/kakao', { method: 'POST', body: JSON.stringify({ code, redirectUri }) }))
+    },
+    [apply],
+  )
+
   const logout = useCallback(async () => {
     try {
       await api<void>('/api/auth/logout', { method: 'POST' })
@@ -73,7 +81,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [apply])
 
-  const value = useMemo(() => ({ user, ready, login, signup, logout }), [user, ready, login, signup, logout])
+  const value = useMemo(
+    () => ({ user, ready, login, signup, kakaoLogin, logout }),
+    [user, ready, login, signup, kakaoLogin, logout],
+  )
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 

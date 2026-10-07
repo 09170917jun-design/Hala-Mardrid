@@ -2,6 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { ApiError } from '../api/client'
 import { useAuth } from '../auth/AuthContext'
+import { startKakaoLogin } from '../auth/kakao'
 
 export default function Login() {
   const { user, ready, login, signup } = useAuth()
@@ -29,6 +30,17 @@ export default function Login() {
     } catch (err) {
       setError(err instanceof ApiError ? err.message : '서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.')
     } finally {
+      setSubmitting(false)
+    }
+  }
+
+  const onKakao = async () => {
+    setError(null)
+    setSubmitting(true)
+    try {
+      await startKakaoLogin(from)
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : '서버에 연결할 수 없어요. 잠시 후 다시 시도해 주세요.')
       setSubmitting(false)
     }
   }
@@ -91,8 +103,8 @@ export default function Login() {
           </button>
         </form>
         <div className="divider">또는</div>
-        <button type="button" className="btn btn-kakao btn-block" disabled title="준비 중입니다">
-          카카오로 계속하기 (준비 중)
+        <button type="button" className="btn btn-kakao btn-block" disabled={submitting} onClick={onKakao}>
+          카카오로 계속하기
         </button>
         <p className="muted auth-switch">
           {mode === 'login' ? '아직 계정이 없으신가요?' : '이미 계정이 있으신가요?'}{' '}
