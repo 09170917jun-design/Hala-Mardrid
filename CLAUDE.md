@@ -47,7 +47,7 @@ npm run dev
 - [x] 레이아웃/디자인 목업: 헤더, 푸터, 홈, 경기, 선수, 게시판, 로그인 (샘플 데이터 `frontend/src/data/mock.ts`) — 사용자 확인 대기
 - [x] 1단계: Hello World 배포 완료 (2026-10-07). 프론트 `https://hala-mardrid.vercel.app` (Vercel Hobby, root `frontend`), 백엔드 `https://hala-madrid-backend.onrender.com` (Render Free, Docker, root `backend`, Singapore), DB Aiven MySQL. `/api/health`가 Vercel 프록시를 거쳐 `db: up` 확인. main 브랜치에 푸시하면 Render/Vercel이 자동 재배포한다. Render 환경변수: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`
 - [ ] 2단계: 인증 — 이메일 가입/로그인/로그아웃/토큰 갱신은 로컬·배포 모두 검증 완료(`7b098e0`, Render `JWT_SECRET` 설정됨). **카카오 로그인 구현·로컬 부분 검증 완료**(백엔드 테스트 14개, 카카오 동의 화면까지 확인). 흐름: 프론트 `/api/auth/kakao/url`로 인증 URL 받아 이동(state는 sessionStorage로 검증) → `/auth/kakao/callback` → `POST /api/auth/kakao`(code, redirectUri; 허용 목록 검사) → 이메일 로그인과 같은 JWT+리프레시 쿠키. 소셜 가입자는 `users.email=null`, `social_accounts` 테이블에 연결, 닉네임은 카카오 닉네임(특수문자 제거, 중복 시 숫자 접미사). 앱 `Mardrid`(ID 1600062), Redirect URI 2개 카카오 콘솔 등록 완료. **남은 일**: ① 사용자가 로컬에서 카카오 버튼으로 실제 로그인 1회 확인 ② Render 환경변수 `KAKAO_CLIENT_ID`(REST API 키), `KAKAO_CLIENT_SECRET` 추가(없으면 카카오 로그인 API가 503) 후 푸시 ③ 배포 환경 카카오 로그인 확인. 로그아웃은 홈으로 이동한다(헤더/내 정보 모두 "먼저 홈으로 navigate → 로그아웃" 순서)
-- [ ] 3단계: 게시판/댓글/좋아요
+- [x] 3단계: 게시판/댓글/좋아요/신고 — 구현·로컬 검증 완료(백엔드 테스트 23개, 브라우저로 글쓰기·좋아요·댓글 확인). 목록/상세/댓글 조회는 비로그인 가능, 쓰기는 로그인 필요. 수정=작성자만, 삭제=작성자 또는 ADMIN(soft delete), 좋아요=토글, 신고=1인 1회(저장만, 관리자 화면은 없음). 집계값(viewCount/likeCount/commentCount)은 posts 컬럼에 두고 원자적 UPDATE로 증감. 홈 "인기 게시글"도 API 연동. 푸시 시 배포 DB에 posts/comments/post_likes/post_reports 테이블이 자동 생성됨. 신고 관리 화면, 글 검색, 조회수 중복 방지는 미구현
 - [ ] 4단계: 선수단 + 경기 동기화 (football-data.org)
 - [ ] 5단계: 선수 평점 투표
 - [ ] 6단계: 마무리(디자인, 테스트, README)

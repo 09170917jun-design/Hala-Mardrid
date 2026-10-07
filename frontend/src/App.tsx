@@ -10,6 +10,8 @@ import Matches from './pages/Matches'
 import Me from './pages/Me'
 import NotFound from './pages/NotFound'
 import Players from './pages/Players'
+import PostDetail from './pages/PostDetail'
+import PostEdit from './pages/PostEdit'
 
 const router = createBrowserRouter([
   {
@@ -19,6 +21,9 @@ const router = createBrowserRouter([
       { path: '/matches', element: <Matches /> },
       { path: '/players', element: <Players /> },
       { path: '/board', element: <Board /> },
+      { path: '/board/write', element: <PostEdit /> },
+      { path: '/board/:id', element: <PostDetail /> },
+      { path: '/board/:id/edit', element: <PostEdit /> },
       { path: '/login', element: <Login /> },
       { path: '/me', element: <Me /> },
       { path: '/auth/kakao/callback', element: <KakaoCallback /> },

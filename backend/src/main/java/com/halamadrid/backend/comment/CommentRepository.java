@@ -1,0 +1,16 @@
+package com.halamadrid.backend.comment;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CommentRepository extends JpaRepository<Comment, Long> {
+
+    @EntityGraph(attributePaths = "author")
+    List<Comment> findByPostIdAndDeletedFalseOrderByIdAsc(Long postId);
+
+    @EntityGraph(attributePaths = { "author", "post" })
+    Optional<Comment> findByIdAndDeletedFalse(Long id);
+}

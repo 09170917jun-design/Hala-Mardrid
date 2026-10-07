@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { listPosts } from '../api/board'
+import { useFetch } from '../api/useFetch'
 import MatchCard from '../components/MatchCard'
-import { formatKickoff, matches, posts } from '../data/mock'
+import { formatKickoff, matches } from '../data/mock'
 
 function useCountdown(target: string) {
   const [now, setNow] = useState(() => Date.now())
@@ -22,6 +24,8 @@ export default function Home() {
   const next = matches.filter((m) => m.status === 'SCHEDULED')[0]
   const recent = matches.filter((m) => m.status === 'FINISHED').slice(0, 3)
   const cd = useCountdown(next.kickoff)
+  const loadPopular = useCallback(() => listPosts(0, 4, 'popular'), [])
+  const popular = useFetch(loadPopular)
   const units: Array<[string, number]> = [
     ['일', cd.days],
     ['시간', cd.hours],
@@ -67,21 +71,29 @@ export default function Home() {
             <h2>인기 게시글</h2>
             <Link to="/board">게시판 가기</Link>
           </div>
-          <ul className="card list">
-            {[...posts]
-              .sort((a, b) => b.likes - a.likes)
-              .slice(0, 4)
-              .map((p) => (
+          {popular.loading && <p className="muted">불러오는 중...</p>}
+          {popular.error && <p className="muted">인기 글을 불러오지 못했어요.</p>}
+          {popular.data && popular.data.items.length === 0 && (
+            <div className="card empty">
+              <p>
+                아직 글이 없어요. <Link to="/board/write">첫 글을 남겨 보세요!</Link>
+              </p>
+            </div>
+          )}
+          {popular.data && popular.data.items.length > 0 && (
+            <ul className="card list">
+              {popular.data.items.map((p) => (
                 <li key={p.id}>
-                  <Link to="/board" className="list-title">
+                  <Link to={`/board/${p.id}`} className="list-title">
                     {p.title}
                   </Link>
                   <span className="muted">
-                    {p.author} · 좋아요 {p.likes}
+                    {p.authorNickname} · 좋아요 {p.likeCount}
                   </span>
                 </li>
               ))}
-          </ul>
+            </ul>
+          )}
         </section>
       </div>
     </>

@@ -20,16 +20,6 @@ export type Player = {
   rating?: number
 }
 
-export type Post = {
-  id: number
-  title: string
-  author: string
-  createdAt: string
-  views: number
-  likes: number
-  comments: number
-}
-
 const day = 24 * 60 * 60 * 1000
 const iso = (offsetDays: number, hour: number) => {
   const d = new Date(Date.now() + offsetDays * day)
@@ -57,14 +47,6 @@ export const players: Player[] = [
   { id: 8, name: '선수 H', position: 'FW', number: 7, nationality: '브라질', rating: 7.9 },
   { id: 9, name: '선수 I', position: 'FW', number: 9, nationality: '프랑스', rating: 8.3 },
   { id: 10, name: '선수 J', position: 'FW', number: 11, nationality: '브라질', rating: 7.5 },
-]
-
-export const posts: Post[] = [
-  { id: 1, title: '어제 경기 후기 — 후반전 교체가 신의 한 수였다', author: '마드리디스타', createdAt: '2026-10-06', views: 482, likes: 37, comments: 21 },
-  { id: 2, title: '이번 시즌 중원 조합 어떻게 보세요?', author: 'halamadrid', createdAt: '2026-10-05', views: 301, likes: 18, comments: 34 },
-  { id: 3, title: '[공지] 게시판 이용 규칙 안내', author: '관리자', createdAt: '2026-10-01', views: 1204, likes: 52, comments: 3 },
-  { id: 4, title: '베르나베우 직관 가는 팁 공유합니다', author: '직관러', createdAt: '2026-09-30', views: 655, likes: 61, comments: 19 },
-  { id: 5, title: '챔스 조별리그 일정 정리', author: 'blanco', createdAt: '2026-09-28', views: 233, likes: 12, comments: 5 },
 ]
 
 export const positionLabel: Record<Player['position'], string> = {
