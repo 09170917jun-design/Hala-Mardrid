@@ -26,6 +26,8 @@
 - PowerShell의 `Set-Content -Encoding utf8`은 **BOM을 붙여** Java 컴파일/설정 파일을 깨뜨린다. 파일 작성은 Write/Edit 도구를 쓴다. (긴 Bash heredoc 여러 개를 한 번에 실행하면 파싱 오류가 날 수 있다.)
 - JDK 21 경로: `C:\Program Files\Eclipse Adoptium\jdk-21*`. 새 터미널이 아니면 `JAVA_HOME`을 직접 지정한다.
 - Docker는 설치하지 않았다. **개발 DB는 로컬 MySQL 8.3(서비스 `MySQL83`, 3306)** 을 쓴다. DB `hala_madrid`, 전용 사용자 `hala`. 접속 정보는 `backend/.env`(`DB_URL`, `DB_USERNAME`, `DB_PASSWORD`)에 있고, DB/사용자 생성 SQL은 `backend/db/local-init.local.sql`(git 제외)에 있다. 배포(Render)에서만 외부 MySQL을 쓰며 같은 이름의 환경변수로 주입한다.
+- **배포용 DB(Aiven 무료 MySQL 8.4)**: 서비스 `mysql-39563ad3`, 호스트 `mysql-39563ad3-jun-2980.c.aivencloud.com`, 포트 `16509`, DB `defaultdb`, 사용자 `avnadmin`, SSL 필수. 비밀번호는 Aiven 콘솔에서만 확인하고 Render 환경변수에 직접 입력한다(채팅/파일 금지). 무료 플랜은 **비활성 시 자동 전원 꺼짐**, 디스크 1GB. 접속 URL: `jdbc:mysql://<호스트>:16509/defaultdb?sslMode=REQUIRED&serverTimezone=Asia/Seoul&characterEncoding=utf8`
+- Aiven에는 실수로 만든 유료(Developer-1) PostgreSQL `pg-1a815a72`가 있다. 사용자가 직접 삭제하기로 했다. 체험 크레딧($50, 30일) 종료 전에 삭제 여부를 확인한다.
 - 백엔드는 DB에 접속할 수 없으면 기동되지 않는다(JPA). 로컬 MySQL이 꺼져 있거나 `.env`가 없으면 먼저 확인한다.
 - 테스트는 `src/test/resources/application.properties` 설정으로 DB 없이 컨텍스트가 뜬다.
 
@@ -43,7 +45,7 @@ npm run dev
 ## 현재 진행 상황 (작업할 때마다 갱신)
 - [x] 0단계: Git 초기화, 기획서, 뼈대(백엔드 헬스체크, 프론트 Vite)
 - [x] 레이아웃/디자인 목업: 헤더, 푸터, 홈, 경기, 선수, 게시판, 로그인 (샘플 데이터 `frontend/src/data/mock.ts`) — 사용자 확인 대기
-- [ ] 1단계: Hello World 배포 (Render + Vercel + 외부 MySQL). 배포 전 `frontend/vercel.json`의 `RENDER_BACKEND_URL`을 실제 주소로 교체해야 함
+- [ ] 1단계: Hello World 배포 (Render + Vercel + 외부 MySQL). **진행 중**: 코드 푸시 완료(`675697b`), Aiven MySQL 생성 완료 → 다음은 Render 서비스 생성(사용자가 DB 비밀번호 입력) → Render 주소로 vercel.json 수정 → Vercel 배포. Render 백엔드 `https://hala-madrid-backend.onrender.com` 배포 완료, vercel.json 반영 완료
 - [ ] 2단계: 인증 (이메일 → 카카오). 카카오 REST API 키는 `backend/.env`, Client Secret은 사용자가 직접 입력(현재 비어 있음)
 - [ ] 3단계: 게시판/댓글/좋아요
 - [ ] 4단계: 선수단 + 경기 동기화 (football-data.org)

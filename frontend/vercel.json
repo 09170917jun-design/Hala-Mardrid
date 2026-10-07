@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://RENDER_BACKEND_URL/api/:path*" },
+    { "source": "/api/:path*", "destination": "https://hala-madrid-backend.onrender.com/api/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
