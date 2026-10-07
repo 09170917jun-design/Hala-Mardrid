@@ -10,6 +10,7 @@ import Matches from './pages/Matches'
 import Me from './pages/Me'
 import NotFound from './pages/NotFound'
 import Players from './pages/Players'
+import PlayerDetail from './pages/PlayerDetail'
 import PostDetail from './pages/PostDetail'
 import PostEdit from './pages/PostEdit'
 
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
       { path: '/', element: <Home /> },
       { path: '/matches', element: <Matches /> },
       { path: '/players', element: <Players /> },
+      { path: '/players/:id', element: <PlayerDetail /> },
       { path: '/board', element: <Board /> },
       { path: '/board/write', element: <PostEdit /> },
       { path: '/board/:id', element: <PostDetail /> },

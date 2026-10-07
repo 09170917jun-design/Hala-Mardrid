@@ -45,6 +45,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/health", "/api/auth/**").permitAll()
                         // 글 목록/상세/댓글 조회는 로그인 없이 볼 수 있다. (쓰기는 아래 규칙대로 로그인 필요)
                         .requestMatchers(HttpMethod.GET, "/api/posts", "/api/posts/**").permitAll()
+                        // 경기 일정/결과, 선수단도 누구나 볼 수 있다.
+                        .requestMatchers(HttpMethod.GET, "/api/matches", "/api/matches/**",
+                                "/api/players", "/api/players/**").permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll())
                 .oauth2ResourceServer(oauth -> oauth

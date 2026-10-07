@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { listPosts } from '../api/board'
+import { listMatches, type MatchItem } from '../api/football'
 import { useFetch } from '../api/useFetch'
 import MatchCard from '../components/MatchCard'
-import { formatKickoff, matches } from '../data/mock'
+import { competitionName, teamName } from '../utils/football'
+import { formatKickoff } from '../utils/format'
 
 function useCountdown(target: string) {
   const [now, setNow] = useState(() => Date.now())
@@ -20,12 +22,9 @@ function useCountdown(target: string) {
   }
 }
 
-export default function Home() {
-  const next = matches.filter((m) => m.status === 'SCHEDULED')[0]
-  const recent = matches.filter((m) => m.status === 'FINISHED').slice(0, 3)
-  const cd = useCountdown(next.kickoff)
-  const loadPopular = useCallback(() => listPosts(0, 4, 'popular'), [])
-  const popular = useFetch(loadPopular)
+function NextMatchHero({ match }: { match: MatchItem }) {
+  const cd = useCountdown(match.kickoffAt)
+  const live = match.status === 'LIVE'
   const units: Array<[string, number]> = [
     ['일', cd.days],
     ['시간', cd.hours],
@@ -34,23 +33,55 @@ export default function Home() {
   ]
 
   return (
+    <div className="container hero-inner">
+      <p className="eyebrow">
+        {live ? 'LIVE' : 'NEXT MATCH'} · {competitionName(match.competitionCode, match.competitionName)}
+      </p>
+      <h1 className="hero-title">
+        {teamName(match.homeTeam)} <span>vs</span> {teamName(match.awayTeam)}
+      </h1>
+      <p className="hero-date">{formatKickoff(match.kickoffAt)}</p>
+      {live ? (
+        <p className="hero-live">
+          {match.homeScore ?? 0} : {match.awayScore ?? 0}
+        </p>
+      ) : (
+        <div className="countdown">
+          {units.map(([label, value]) => (
+            <div key={label} className="count-box">
+              <strong>{String(value).padStart(2, '0')}</strong>
+              <span>{label}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default function Home() {
+  const loadNext = useCallback(() => listMatches('upcoming', 1), [])
+  const loadRecent = useCallback(() => listMatches('finished', 3), [])
+  const loadPopular = useCallback(() => listPosts(0, 4, 'popular'), [])
+  const next = useFetch(loadNext)
+  const recent = useFetch(loadRecent)
+  const popular = useFetch(loadPopular)
+  const nextMatch = next.data?.[0]
+
+  return (
     <>
       <section className="hero">
-        <div className="container hero-inner">
-          <p className="eyebrow">NEXT MATCH · {next.competition}</p>
-          <h1 className="hero-title">
-            {next.home} <span>vs</span> {next.away}
-          </h1>
-          <p className="hero-date">{formatKickoff(next.kickoff)}</p>
-          <div className="countdown">
-            {units.map(([label, value]) => (
-              <div key={label} className="count-box">
-                <strong>{String(value).padStart(2, '0')}</strong>
-                <span>{label}</span>
-              </div>
-            ))}
+        {nextMatch ? (
+          <NextMatchHero match={nextMatch} />
+        ) : (
+          <div className="container hero-inner">
+            <p className="eyebrow">HALA MADRID</p>
+            <h1 className="hero-title">레알 마드리드 팬 커뮤니티</h1>
+            <p className="hero-date">
+              {next.loading ? '경기 일정을 불러오는 중이에요...' : '다음 경기 일정을 준비하고 있어요.'}
+            </p>
           </div>
-        </div>
+        )}
       </section>
 
       <div className="container">
@@ -59,11 +90,20 @@ export default function Home() {
             <h2>최근 경기 결과</h2>
             <Link to="/matches">전체 보기</Link>
           </div>
-          <div className="grid grid-3">
-            {recent.map((m) => (
-              <MatchCard key={m.id} match={m} />
-            ))}
-          </div>
+          {recent.loading && <p className="muted">불러오는 중...</p>}
+          {recent.error && <p className="muted">경기 결과를 불러오지 못했어요.</p>}
+          {recent.data && recent.data.length === 0 && (
+            <div className="card empty">
+              <p>아직 종료된 경기가 없어요.</p>
+            </div>
+          )}
+          {recent.data && recent.data.length > 0 && (
+            <div className="grid grid-3">
+              {recent.data.map((m) => (
+                <MatchCard key={m.id} match={m} />
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="section">

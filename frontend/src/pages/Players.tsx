@@ -1,7 +1,10 @@
 import { useState } from 'react'
-import { players, positionLabel, type Player } from '../data/mock'
+import { Link } from 'react-router-dom'
+import { listPlayers, type Position } from '../api/football'
+import { useFetch } from '../api/useFetch'
+import { positionLabel } from '../utils/football'
 
-const filters: Array<{ key: 'ALL' | Player['position']; label: string }> = [
+const filters: Array<{ key: 'ALL' | Position; label: string }> = [
   { key: 'ALL', label: '전체' },
   { key: 'GK', label: positionLabel.GK },
   { key: 'DF', label: positionLabel.DF },
@@ -11,12 +14,12 @@ const filters: Array<{ key: 'ALL' | Player['position']; label: string }> = [
 
 export default function Players() {
   const [filter, setFilter] = useState<(typeof filters)[number]['key']>('ALL')
-  const list = players.filter((p) => filter === 'ALL' || p.position === filter)
+  const { data, error, loading } = useFetch(listPlayers)
+  const list = data?.filter((p) => filter === 'ALL' || p.position === filter)
 
   return (
     <div className="container page">
       <h1 className="page-title">선수단</h1>
-      <p className="muted notice">※ 현재 화면의 선수 정보는 디자인 확인용 샘플입니다.</p>
       <div className="tabs">
         {filters.map((f) => (
           <button key={f.key} className={filter === f.key ? 'active' : ''} onClick={() => setFilter(f.key)}>
@@ -24,22 +27,29 @@ export default function Players() {
           </button>
         ))}
       </div>
-      <div className="grid grid-4">
-        {list.map((p) => (
-          <article key={p.id} className="card player-card">
-            <div className="player-number">{p.number}</div>
-            <h3>{p.name}</h3>
-            <p className="muted">
-              {positionLabel[p.position]} · {p.nationality}
-            </p>
-            {p.rating && (
-              <p className="player-rating">
-                평균 평점 <strong>{p.rating.toFixed(1)}</strong>
+
+      {loading && <p className="muted">불러오는 중... (서버가 잠들어 있었다면 1분쯤 걸릴 수 있어요)</p>}
+      {error && <p className="form-error">{error}</p>}
+      {list && list.length === 0 && (
+        <div className="card empty">
+          <p>표시할 선수가 아직 없어요. 데이터를 준비 중일 수 있으니 잠시 후 다시 확인해 주세요.</p>
+        </div>
+      )}
+      {list && list.length > 0 && (
+        <div className="grid grid-4">
+          {list.map((p) => (
+            <Link key={p.id} to={`/players/${p.id}`} className="card player-card">
+              <div className="player-number">{p.shirtNumber ?? p.position}</div>
+              <h3>{p.name}</h3>
+              <p className="muted">
+                {positionLabel[p.position]}
+                {p.nationality ? ` · ${p.nationality}` : ''}
               </p>
-            )}
-          </article>
-        ))}
-      </div>
+            </Link>
+          ))}
+        </div>
+      )}
+      <p className="muted notice data-source">선수단 정보 제공: football-data.org</p>
     </div>
   )
 }
