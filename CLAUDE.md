@@ -46,7 +46,7 @@ npm run dev
 - [x] 0단계: Git 초기화, 기획서, 뼈대(백엔드 헬스체크, 프론트 Vite)
 - [x] 레이아웃/디자인 목업: 헤더, 푸터, 홈, 경기, 선수, 게시판, 로그인 (샘플 데이터 `frontend/src/data/mock.ts`) — 사용자 확인 대기
 - [x] 1단계: Hello World 배포 완료 (2026-10-07). 프론트 `https://hala-mardrid.vercel.app` (Vercel Hobby, root `frontend`), 백엔드 `https://hala-madrid-backend.onrender.com` (Render Free, Docker, root `backend`, Singapore), DB Aiven MySQL. `/api/health`가 Vercel 프록시를 거쳐 `db: up` 확인. main 브랜치에 푸시하면 Render/Vercel이 자동 재배포한다. Render 환경변수: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`
-- [ ] 2단계: 인증 — **이메일 가입/로그인/로그아웃/토큰 갱신 구현·로컬 검증 완료**(백엔드 테스트 9개, 브라우저 확인). 구조: 액세스 JWT(15분, 메모리) + 리프레시 토큰(14일, httpOnly 쿠키 `refresh_token`, path `/api/auth`, DB엔 SHA-256 해시, 1회용 회전). **남은 일**: ① Render 환경변수 `JWT_SECRET` 추가(없으면 백엔드가 기동 실패) ② 카카오 로그인(Client Secret은 사용자가 `backend/.env`에 입력, Redirect URI `http://localhost:5173/auth/kakao/callback`, `https://hala-mardrid.vercel.app/auth/kakao/callback` 등록 필요, 프론트 카카오 버튼은 현재 비활성)
+- [ ] 2단계: 인증 — **이메일 가입/로그인/로그아웃/토큰 갱신 구현, 로컬·배포 환경 모두 검증 완료(2026-10-07, `7b098e0`)**. Render `JWT_SECRET` 설정 완료. 배포 DB에 확인용 계정 `deploy.check@example.com`(닉네임 `deploy_check`)이 있음(백엔드 테스트 9개, 브라우저 확인). 구조: 액세스 JWT(15분, 메모리) + 리프레시 토큰(14일, httpOnly 쿠키 `refresh_token`, path `/api/auth`, DB엔 SHA-256 해시, 1회용 회전). **남은 일**: 카카오 로그인(Client Secret은 사용자가 `backend/.env`에 입력, Redirect URI `http://localhost:5173/auth/kakao/callback`, `https://hala-mardrid.vercel.app/auth/kakao/callback` 등록 필요, 프론트 카카오 버튼은 현재 비활성)
 - [ ] 3단계: 게시판/댓글/좋아요
 - [ ] 4단계: 선수단 + 경기 동기화 (football-data.org)
 - [ ] 5단계: 선수 평점 투표
