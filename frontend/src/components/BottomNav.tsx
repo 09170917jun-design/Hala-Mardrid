@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext'
 
 const icon = (path: ReactNode) => (
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -47,9 +48,13 @@ const items = [
 ]
 
 export default function BottomNav() {
+  const { user } = useAuth()
+  // 마지막 탭은 로그인 상태에 따라 "로그인" / "내 정보"로 바뀐다.
+  const tabs = items.map((i) => (i.to === '/login' && user ? { ...i, to: '/me', label: '내 정보' } : i))
+
   return (
     <nav className="bottom-nav" aria-label="하단 메뉴">
-      {items.map((i) => (
+      {tabs.map((i) => (
         <NavLink key={i.to} to={i.to} end={i.end}>
           <span className="bottom-icon">{i.icon}</span>
           <span>{i.label}</span>

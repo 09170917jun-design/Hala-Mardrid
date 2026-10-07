@@ -1,4 +1,5 @@
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext'
 
 const links = [
   { to: '/', label: '홈', end: true },
@@ -8,6 +9,14 @@ const links = [
 ]
 
 export default function Header() {
+  const { user, ready, logout } = useAuth()
+  const navigate = useNavigate()
+
+  const onLogout = async () => {
+    await logout()
+    navigate('/', { replace: true })
+  }
+
   return (
     <header className="header">
       <div className="container header-inner">
@@ -22,9 +31,21 @@ export default function Header() {
               {l.label}
             </NavLink>
           ))}
-          <Link to="/login" className="btn btn-primary nav-login">
-            로그인
-          </Link>
+          {ready &&
+            (user ? (
+              <>
+                <NavLink to="/me" className="nav-user">
+                  {user.nickname}
+                </NavLink>
+                <button type="button" className="btn btn-ghost nav-login" onClick={onLogout}>
+                  로그아웃
+                </button>
+              </>
+            ) : (
+              <Link to="/login" className="btn btn-primary nav-login">
+                로그인
+              </Link>
+            ))}
         </nav>
       </div>
     </header>

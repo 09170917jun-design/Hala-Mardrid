@@ -705,3 +705,54 @@
   text-align: center;
   padding-top: 80px;
 }
+
+/* ---------- Auth state ---------- */
+.nav a.nav-user {
+  color: var(--navy);
+  font-weight: 700;
+}
+
+.nav .btn.nav-login {
+  min-height: 40px;
+}
+
+.form-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  background: #ffdad6;
+  color: #93000a;
+  font-size: 14px;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.profile {
+  max-width: 480px;
+  padding: var(--space-lg);
+}
+
+.profile dl {
+  margin: 0 0 var(--space-lg);
+}
+
+.profile dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.profile dt {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.profile dd {
+  margin: 0;
+  font-weight: 600;
+}
