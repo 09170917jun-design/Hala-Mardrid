@@ -1,0 +1,23 @@
+﻿# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+# Secrets
+.env
+.env.*
+!.env.example
+application-secret*.yml
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vercel/
+
+# Backend
+backend/build/
+backend/.gradle/
+backend/out/
+*.log
