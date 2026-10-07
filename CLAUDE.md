@@ -45,7 +45,7 @@ npm run dev
 ## 현재 진행 상황 (작업할 때마다 갱신)
 - [x] 0단계: Git 초기화, 기획서, 뼈대(백엔드 헬스체크, 프론트 Vite)
 - [x] 레이아웃/디자인 목업: 헤더, 푸터, 홈, 경기, 선수, 게시판, 로그인 (샘플 데이터 `frontend/src/data/mock.ts`) — 사용자 확인 대기
-- [ ] 1단계: Hello World 배포 (Render + Vercel + 외부 MySQL). **진행 중**: 코드 푸시 완료(`675697b`), Aiven MySQL 생성 완료 → 다음은 Render 서비스 생성(사용자가 DB 비밀번호 입력) → Render 주소로 vercel.json 수정 → Vercel 배포. Render 백엔드 `https://hala-madrid-backend.onrender.com` 배포 완료, vercel.json 반영 완료
+- [x] 1단계: Hello World 배포 완료 (2026-10-07). 프론트 `https://hala-mardrid.vercel.app` (Vercel Hobby, root `frontend`), 백엔드 `https://hala-madrid-backend.onrender.com` (Render Free, Docker, root `backend`, Singapore), DB Aiven MySQL. `/api/health`가 Vercel 프록시를 거쳐 `db: up` 확인. main 브랜치에 푸시하면 Render/Vercel이 자동 재배포한다. Render 환경변수: `DB_URL`, `DB_USERNAME`, `DB_PASSWORD`
 - [ ] 2단계: 인증 (이메일 → 카카오). 카카오 REST API 키는 `backend/.env`, Client Secret은 사용자가 직접 입력(현재 비어 있음)
 - [ ] 3단계: 게시판/댓글/좋아요
 - [ ] 4단계: 선수단 + 경기 동기화 (football-data.org)
